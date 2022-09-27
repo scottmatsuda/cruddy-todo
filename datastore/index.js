@@ -8,9 +8,57 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+
+  counter.getNextUniqueId((error, id) => {
+
+
+    let destination = path.join(exports.dataDir, `${id}.txt`);
+    // console.log('destination: ', destination);
+    // console.log('text', text);
+
+    // console.log('arguments: ', arguments);
+
+    // let args = arguments;
+    // let tempId = args[0];
+    // let destination = path.join(exports.dataDir, `/${tempId}.txt`);
+    // let destination = path.join(exports.dataDir, '/:id.txt');
+
+    // this line of code is being executed, but we don't know how to get access to id
+    // writeCounter(id + 1, callback);
+
+    //writefile takes in parameter of file, data, options, callback
+    fs.writeFile(destination, text, (error) => {
+      if (error) {
+        // throw ('error: unsuccessful');
+        callback(error);
+      } else {
+        callback(null, { id, text });
+        // console.log('success');
+
+      }
+    });
+  });
+
+
+  // var id = counter.getNextUniqueId();
+  // items[id] = text;
+  // callback(null, { id, text });
+
+
+  // let path = exports.dataDir + '/:id';
+  // fs.writeFile(path, text, (err) => {
+  //   if (err) {
+  //     throw ('error writing counter');
+  //   } else {
+  //     console.log('create success');
+  //   }
+  // });
+
+  // callback(null, { id, text });
+
+
+
+
 };
 
 exports.readAll = (callback) => {
