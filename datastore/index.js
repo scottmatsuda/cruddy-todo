@@ -30,7 +30,7 @@ exports.readAll = (callback) => {
     } else {
       _.each(files, (file) => {
         let id = file.slice(0, file.length - 4);
-        file = {id: id, text: id};
+        file = { id: id, text: id };
         fileArray.push(file);
       });
       callback(null, fileArray);
@@ -50,6 +50,7 @@ exports.readOne = (id, callback) => {
       callback(error);
     } else {
       let text = data.toString('utf8');
+      console.log('id: ', id, '  text: ', text);
       callback(null, { id, text });
     }
   });
@@ -64,13 +65,20 @@ exports.readOne = (id, callback) => {
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  let destination = path.join(exports.dataDir, `${id}.txt`);
+  fs.readFile(destination, (error, data) => {
+    if (error) {
+      callback(error);
+    } else {
+      fs.writeFile(destination, text, (error) => {
+        if (error) {
+          callback(error);
+        } else {
+          callback(null, { id, text });
+        }
+      });
+    }
+  });
 };
 
 exports.delete = (id, callback) => {
